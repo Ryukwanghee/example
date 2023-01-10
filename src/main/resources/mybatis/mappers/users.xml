@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sample.mapper.UserMapper"> <!-- name스페이스를 반드시 정의 -->
+	
+	<!-- 
+		void insertUser(User user)
+	 -->
+	 <insert id="insertUser" parameterType="User">
+	 	insert into spring_users
+	 		(user_id, user_password, user_name, user_email, user_tel)
+	 	values
+	 		(#{id}, #{password}, #{name}, #{email}, #{tel})
+	 </insert>
+	 
+	 <!-- 
+	 	void updateUser(User user)
+	  -->
+	  <update id="updateUser" parameterType="User">
+	  	update
+	  		spring_users
+	  	set
+	  		user_password = #{password},
+	  		user_tel = #{tel},
+	  		user_photo = #{photo},
+	  		user_deleted = #{deleted},
+	  		user_updated_date = sysdate
+	  	where
+	  		user_id = #{id}
+	  </update>
+	  
+	  <!-- 
+	  	User getUserById(String userId)
+	   -->
+	  <select id="getUserById" parameterType="String" resultType="User">
+	  	select
+	  		user_id as id,
+	  		user_password as password,
+	  		user_name as name,
+	  		user_email as email,
+	  		user_tel as tel,
+	  		user_photo as photo,
+	  		user_deleted as deleted,
+	  		user_updated_date as updatedDate,
+	  		user_created_date as createdDate
+	  	from
+	  		spring_users
+	  	where
+	  		user_id = #{value}
+	  </select>
+	  
+	  <!-- 
+	  	User getUserByEmail(String userEmail)
+	   -->
+	  <select id="getUserByEmail" parameterType="String" resultType="User">
+	  	select
+	  		user_id as id,
+	  		user_password as password,
+	  		user_name as name,
+	  		user_email as email,
+	  		user_tel as tel,
+	  		user_photo as photo,
+	  		user_deleted as deleted,
+	  		user_updated_date as updatedDate,
+	  		user_created_date as createdDate
+	  	from
+	  		spring_users
+	  	where
+	  		user_email = #{value}
+	  </select>
+	  
+	  
+</mapper>

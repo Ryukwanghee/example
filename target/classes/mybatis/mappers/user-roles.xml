@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sample.mapper.UserRoleMapper">
+	
+	<!-- 
+		void insertUserRole(UserRole userRole) 
+	-->
+	<insert id="insertUserRole" parameterType="UserRole">
+		insert into spring_user_roles
+			(user_id, user_role_name)
+		values
+			(#{userId}, #{roleName})
+	</insert>
+	
+	<!-- 
+		void deleteUserRole(UserRole userRole)
+	 -->
+	<delete id="deleteUserRole" parameterType="UserRole">
+		delete from
+			spring_user_roles
+		where
+			user_id = #{userId}
+			and user_role_name = #{roleName}
+	</delete>
+	
+	<!-- 
+		List<UserRole> getUserRolesByUserId(String userId)
+	 -->
+	 <select id="getUserRolesByUserId" parameterType="String" resultType="UserRole">
+	 	select
+	 		user_id as userId,
+	 		user_role_name as roleName
+	 	from
+	 		spring_user_roles
+	 	where
+	 		user_id = #{value}
+	 </select>
+</mapper>

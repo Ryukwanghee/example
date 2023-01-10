@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36}.%M - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 
+    	com.sample.mapper 패키지의 로그레벨을 trace로 설정한다.
+  		* mybatis 실행 로그를 출력
+
+    	* 로그레벨은 debug, info, warn, error이 있다.
+    		debug : 자세한 프로그램 실행 정보를 logger.debug(메세지)로 출력한다.
+    		info : 프로그램 실행정보를 확인할 수 있는 최소한의 정보를 logger.info(메세지)로 출력한다.
+    		warn : 프로그램 실행에 문제는 없지만 잠재적인 오류의 원인이 될 수 있는 정보를 logger.warn(메세지)로 출력한다.
+    		error : 프로그램 오류의 원인을 logger.error(메세지)로 출력한다.
+    	* 개발과정에서의 로그레벨은 debug로 설정한다.
+    	* 운영과정에서의 로그레벨은 error로 설정한다.
+     -->
+    <logger name="com.sample.mapper">
+    	<level value="debug"></level>
+    </logger>
+    <!-- 
+    	<root />는 애플리케이션의 루트 로그출력 레벨이다.
+    	<logger name="" /> 루트 로그출력 레벨과는 별도로 패키지 혹은 클래스를 지정해서 로그 출력 레벨을 설정한다.
+     -->
+    <root level="debug">
+    	<!-- 
+    		<appender-ref /> 태그는 로그 출력 방향을 지정한다.
+    			ref="STDOUT"는 위에서 정의한 appender 정의를 참조한다.
+    	 -->
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

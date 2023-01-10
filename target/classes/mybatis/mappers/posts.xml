@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sample.mapper.PostMapper">
+
+	<select id="getPosts" resultType="com.sample.dto.PostListDto">
+		select
+			A.post_no as no,
+			A.post_title as title,
+			A.post_user_id as userId,
+			A.post_read_count as readCount,
+			A.post_comment_count as commentCount,
+			A.post_created_date as createdDate,
+			B.user_name as userName
+		from
+			spring_posts A, spring_users B
+		where
+			A.post_user_id = B.user_id
+			and A.post_deleted = 'N'
+		order by
+			A.post_no desc
+	</select>
+	
+	<insert id="insertPost" parameterType="Post">
+		insert into spring_posts
+			(post_no, post_title, post_user_id, post_content)
+		values
+			(spring_posts_seq.nextval, #{title}, #{userId}, #{content})
+	</insert>
+	
+	<update id="updatePost" parameterType="Post">
+		update
+			spring_posts
+		set
+			post_title = #{title},
+			post_content = #{content},
+			post_deleted = #{deleted},
+			post_read_count = #{readCount},
+			post_comment_count = #{commentCount},
+			post_updated_date = #{updatedDate}
+		where
+			post_user_id = #{userId}
+	</update>
+</mapper>

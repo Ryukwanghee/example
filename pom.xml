@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.sample</groupId>
+	<artifactId>spring-web</artifactId>
+	<packaging>war</packaging>
+	<version>1.0.0</version>
+	<name>spring-web</name>
+	<url>http://www.egovframe.go.kr</url>
+
+	<!-- 
+		</properties> 태그는
+		pom.xml 파일에서 사용하는 상수값을 정의한다.
+	 -->
+	<properties>
+		<!-- 자바 버전을 정의한다. -->
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<!-- 스프링 프레임워크 버전을 정의한다. -->
+		<slf4j.version>1.7.25</slf4j.version>
+		<spring.maven.artifact.version>5.3.6</spring.maven.artifact.version>
+		<!-- 로그출력을 지원하는 slf4j버전을 정의한다. -->
+	</properties>
+
+	<!-- 
+		<dependencies /> 태그는
+			프로젝트의 라이브러리 의존성 정보를 정의한다.
+			라이브러리 의존성 정보는 <dependency /> 태그로 정의한다.
+			라이브러리 의존성 정보는 groupId, artifactId, version으로 구성된다.
+	 -->
+
+	<dependencies>
+		<!-- 
+			spring-webmvc 라이브러리 의존성을 추가한다.
+				* spring-web.jar, spring-webmvc.jar 라이브러리를 추가한다.
+				* spring-web.jar는 웹환경에 최적화된 Spring Container(객체 생성/조립/관리 담당하는 객체)를 제공한다.
+				* spring-webmvc.jar는 MVC 패턴의 웹 애플리케이션의 개발을 지원하는 인터페이스, 클래스, 어노테이션, 서블릿 등을 지원한다.
+		 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>5.3.24</version>
+		</dependency>
+		<!-- 
+			spring-context 라이브러리 의존성 추가 
+				* spring-context.jar, spring-aop.jar, spring-beans.jar, spring-core.jar, spring-expression.jar
+				  라이브러리를 추가한다.
+				* spring-context.jar는 Spring Container를 제공한다.
+				* spring-aop.jar는 관점지향 프로그래밍을 지원한다.
+				* spring-expression.jar는 spring EL을 지원한다.
+		-->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.24</version>
+		</dependency>
+		<!-- 
+			spring-jdbc 라이브러리 의존성 추가 
+			* spring-jdbc.jar, spring-tx.jar 라이브러리를 추가한다.
+			* spring-jdbc.jar는 spring-jdbc기반의 데이터베이스 엑세스를 지원한다.
+			* spring-tx.jar는 트랜잭션 처리를 지원한다. 
+		-->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>5.3.24</version>
+		</dependency>
+		<!-- 
+			mybatis 라이브러리 의존성 추가 
+				* mybatis.jar 라이브러리 추가
+				* mybatis는 SQL Mapping Framework이다. 
+				* mybatis는 ibatis보다 더 쉽게 데이터베이스 엑세스를 구현할 수 있다. 
+		-->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>3.5.11</version>
+		</dependency>
+		<!-- 
+			mybatis-spring 라이브러리 의존성 추가 
+				* mybatis와 spring의 연동을 지원한다. 
+				* mybatis를 이용하는 데이터베이스 엑세스 작업의 핵심 객체를 스프링의 빈으로 등록시킨다. 
+				* Mapper 인터페이스를 스캔해서 Mapper 인스턴스(객체)를 생성하고 스프링 컨테이너의 빈으로 등록시킨다.
+		-->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<!-- 
+			오라클 jdbc 드라이버 라이브러리 의존성 추가 
+		-->
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc11</artifactId>
+			<version>21.8.0.0</version>
+		</dependency>
+		<!-- 
+			로그 출력을 지원하는 라이브러리 의존성 
+		 -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.36</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<!-- 
+			자바 웹 관련 라이브러리 의존성 추가
+				* 서블릿, JSP, 
+		 -->
+		<dependency>
+	         <groupId>javax.servlet</groupId>
+	         <artifactId>servlet-api</artifactId>
+	         <version>2.5</version>
+	         <scope>provided</scope>
+	      </dependency>
+	      <dependency>
+	         <groupId>javax.servlet</groupId>
+	         <artifactId>jstl</artifactId>
+	         <version>1.2</version>
+	      </dependency>
+	      <dependency>
+	         <groupId>taglibs</groupId>
+	         <artifactId>standard</artifactId>
+	         <version>1.1.2</version>
+	      </dependency>
+	      <dependency>
+	         <groupId>javax.servlet.jsp</groupId>
+	         <artifactId>javax.servlet.jsp-api</artifactId>
+	         <version>2.3.3</version>
+	         <scope>provided</scope>
+	      </dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.2</version>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

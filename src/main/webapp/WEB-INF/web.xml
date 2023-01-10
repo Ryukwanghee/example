@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+
+	<!-- 
+		루트 스프링 컨테이너 생성하기
+			* <context-param /> 태그에 spring bean configuration 파일의 경로 및 이름을 지정한다. <context-param />이라고 지정하면 모든 곳에서 읽을 수 있다.
+			* <listener /> 태그에 ContextLoaderListener 클래스를 등록한다.
+			* ContextLoaderListener 
+				* 리스너 클래스다.
+				* <context-param />태그에 contextConfigLocation으로 설정된 빈 설정정보를 읽어서 루트 스프링 컨테이너를 생성한다.
+		* Listener
+			* Java Servlet API다. (자바 서블릿의 기술임(스프링의 기술아님))
+			* Java Servlet의 이벤트 처리를 지원하는 인터페이스다.
+			* 리스너 인터페이스의 종류
+				ServletContextListener
+					ServletContext객체가 초기화/소멸될 때 실행할 작업을 구현하는 클래스는 이 인터페이스를 구현한다.
+					* Servletcontext는 웹서버가 실행될 때 초기화된다. -> 웹서버가 실행될 때 수행할 작업을 구현시 이 리스너를 구현한다.
+					* 스프링의 ContextLoaderListener는 이 인터페이스를 구현한 클래스이기 때문에 
+					웹서버가 실행될 때 수행할 작업(빈 설정파일 로드, 스프링 컨테이너 생성)이 구현되어 있다.
+				ServletContextAttributeListener
+					ServletContext객체에 속성이 추가/삭제/변경될 때 실행할 작업을 구현하는 클래스는 이 인터페이스를 구현한다.
+				HttpSessionListener
+					HttpSession객체가 생성/소멸될 때 실행할 작업을 구현하는 클래스는 이 인터페이스를 구현한다.
+				HttpSessionAttributeListener
+					HttpSession객체에 속성이 추가/삭제/변경될 때 실행할 작업을 구현하는 클래스는 이 인터페이스를 구현한다.
+				HttpSessionBindingListener
+					HttpSession객체가 저장되는 객체는 이 인터페이스를 구현하는 객체가 속성으로 추가/삭제될 때 실행할 작업을 구현할 수 있다.
+				ServletRequestListener
+					요청객체가 초기화/소멸될 때 실행할 작업을 구현하는 클래스는 이 인터페이스를 구현한다.
+				servletRequestAttributeListener
+					요청객체에 속성이 추가/삭제/변경될 때 실행할 작업을 구현하는 클래스는 이 인터페이스를 구현한다.
+	 -->
+	<context-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>
+         /WEB-INF/spring/database-context.xml
+         /WEB-INF/spring/service-context.xml
+      </param-value>
+   </context-param>
+   <listener>
+      <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+   </listener>
+   
+   <!-- 
+   	한글 인코딩처리를 지원하는 필터를 설정한다.
+    -->
+   <filter>
+   		<filter-name>encodingFilter</filter-name>
+   		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+   		<init-param>
+   			<param-name>encoding</param-name>
+   			<param-value>UTF-8</param-value>
+   		</init-param>
+   </filter>
+   <filter-mapping>
+   		<filter-name>encodingFilter</filter-name>
+   		<url-pattern>/*</url-pattern>
+   </filter-mapping>
+   
+   
+   
+   
+	<!-- 
+		DispatcherServlet은 spring mvc가 제공하는 FrontController이다.
+		* 모든 URL 요청에 대해서( <url-pattern>/</url-pattern> ) DispatcherServlet이 실행되도록 설정함
+		* 아래의 설정정보에 지정된 web-context.xml 파일을 읽어서 DispatcherServlet이 스프링 컨테이너를 생성하게 한다.
+		  스프링 컨테이너에는 web-context.xml에 설정된 클래스들이 스프링 컨테이너의 빈으로 등록된다.
+		  스프링 컨테이너의 빈으로 등록된 객체들 중에는 HomeController, UserController, PostController 등 다양한 컨트롤러 객체가 포함되어 있다.
+		  DispatcherServlet은 요청이 접수되면 요청 URI에 해당하는 매핑정보가 포함된 컨트롤러 객체를 스프링 컨테이너에서 가져와서 실행시킨다.
+			<init-param>
+				<param-name>contextConfigLocation</param-name>
+				<param-value>/WEB-INF/spring/web-context.xml</param-value>
+			</init-param>
+			
+		* 웹서버가 실행될 때 DispatcherServlet객체를 생성하고, 초기화시키기
+			 <load-on-startup>1</load-on-startup>
+			 * 숫자1은 우선순위를 나타낸다. 서블릿객체를 여러개 등록하는 경우 숫자가 낮을 수록 먼저 생성되고 초기화된다.
+			 * 웹서버가 켜질 때 DispatcherServlet 객체를 생성하고, 초기화 작업을 완료시키기 위해서 설정한다.
+			 * DispatcherServlet 초기화 과정에서 <init-param /> 태그의 정보를읽어서 Spring Container를 생성하고,
+			   설정정보를 분석해서 필요한 객체를 생성하고 조립한다.
+	 -->
+	<servlet>
+		<servlet-name>app</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/web-context.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>app</servlet-name>
+		<!-- 모든 url 실행.   모든 url 요청에 대해서 app이름을 가진 dispatcher 가 실행되게 설정한 것, -->
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	<!--
+		jsp로 끝나는 모든 jsp에 <include-prelude>/WEB-INF/views/common/tags.jsp</include-prelude> 얘가 포함되게, 모든 jsp 첫부분에 tags.jsp가 포함되게 
+		
+		모든 JSP 첫부분에   tags.jsp 가 포함되게
+	-->
+	<jsp-config>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<include-prelude>/WEB-INF/views/common/tags.jsp</include-prelude>
+		</jsp-property-group>
+	</jsp-config>
+	
+</web-app>
