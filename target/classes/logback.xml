@@ -18,13 +18,13 @@
     	* 운영과정에서의 로그레벨은 error로 설정한다.
      -->
     <logger name="com.sample.mapper">
-    	<level value="debug"></level>
+    	<level value="trace"></level>
     </logger>
     <!-- 
     	<root />는 애플리케이션의 루트 로그출력 레벨이다.
     	<logger name="" /> 루트 로그출력 레벨과는 별도로 패키지 혹은 클래스를 지정해서 로그 출력 레벨을 설정한다.
      -->
-    <root level="debug">
+    <root level="info">
     	<!-- 
     		<appender-ref /> 태그는 로그 출력 방향을 지정한다.
     			ref="STDOUT"는 위에서 정의한 appender 정의를 참조한다.

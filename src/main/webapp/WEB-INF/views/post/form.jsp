@@ -21,7 +21,7 @@
 	<div class="row mb-3">
 		<div class="col">
 			<p>제목과 내용을 입력하세요</p>
-			<form class="border bg-light p-3" method="post" action="insert">
+			<form id="form-post" class="border bg-light p-3" method="post" action="insert">
 				<div class="mb-2">
 					<label class="form-label">제목</label>
 					<input type="text" class="form-control" name="title" />
@@ -40,5 +40,23 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(function() {
+	$("#form-post").submit(function() {
+		let title = $("#form-post :input[name=title]").val();	// : 는 모든 입력요소 select text 다 가리킨다.
+		let content = $("#form-post :textarea[name=content]").val();
+		
+		if (title == "") {
+			alert("제목을 입력하세요");
+			return false;
+		}
+		if (content == ""){
+			alert("내용을 입력하세요");
+			return false;
+		}
+		return true;
+	});
+});
+</script>
 </body>
 </html>

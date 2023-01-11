@@ -24,7 +24,7 @@
 				게시글 상세정보를 확인하세요. 
 				<!-- 로그인한 상태인 경우 아래 버튼이 출력된다. -->
 				<c:if test="${not empty loginUser }">
-				<button class="btn btn-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#modal-form-comments">댓글 쓰기</button>
+					<button class="btn btn-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#modal-form-comments">댓글 쓰기</button>
 				</c:if>
 			</p>
 			<table class="table table-sm">
@@ -68,32 +68,46 @@
 	<!-- 
 		해당 게시글의 작성자와 로그인한 사용자의 아이디가 일치하는 경우 아래 내용이 출력된다.
 	 -->
-	<div class="row mb-3">
-		<div class="col-12">
-			<a href="modify?postNo=100" class="btn btn-warning btn-sm">수정</a>
-			<a href="delete?postNo=100" class="btn btn-danger btn-sm">삭제</a>
+	<c:if test="${post.userId eq loginUser.id }">	<!-- LoginUser, LoginUserInfo  -->
+		<div class="row mb-3">
+			<div class="col-12">
+				<a href="modify?postNo=${post.no }" class="btn btn-warning btn-sm">수정</a>
+				<a href="delete?postNo=${post.no }" class="btn btn-danger btn-sm">삭제</a>
+			</div>
 		</div>
-	</div>
+	</c:if>
 	
 	<!-- 댓글 목록  -->
 	<div class="row mb-3">
 		<div class="col">
-			<div class="border p-2 mb-2">
-				<p class="mb-0">등록된 댓글이 없습니다.</p>
-			</div>
-			<div class="border p-2 mb-2">
-				<p class="mb-0 small">
-					<span class="text-muted">홍길동</span> 
-					<span class="text-muted float-end">2023. 1. 10</span>
-				</p>
-				<p class="mb-0">
-					댓글 내용입니다.
-					<!-- 
-						댓글작성자와 로그인한 사용자의 아이디가 일치하는 경우 아래 링크가 출력된다.
-					 -->
-					<a href="delete-comment?postNo=100&commentNo=2000" class="float-end"><i class="bi bi-trash-fill text-danger"></i></a>
-				</p>
-			</div>
+			<c:choose>
+				<c:when test="${empty post.comments }">
+					<div class="border p-2 mb-2">
+						<p class="mb-0">등록된 댓글이 없습니다.</p>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<c:forEach var="comment" items="${post.comments }">
+						<div class="border p-2 mb-2">
+							<p class="mb-0 small">
+								<span class="text-muted">${comment.userName }</span> 
+								<span class="text-muted float-end"><fmt:formatDate value="${comment.createdDate }" /></span>
+							</p>
+							<p class="mb-0">
+								${comment.content }
+								<!-- 
+									댓글작성자와 로그인한 사용자의 아이디가 일치하는 경우 아래 링크가 출력된다.
+								 -->
+								 <c:if test="${comment.userId eq loginUser.id }">
+									<a href="delete-comment?postNo=${post.no }&commentNo=${comment.no }" class="float-end">
+										<i class="bi bi-trash-fill text-danger"></i>
+									</a>
+								 </c:if>
+							</p>
+						</div>
+					</c:forEach>
+				</c:otherwise>
+			</c:choose>
 		</div>
 	</div>
 </div>
@@ -104,7 +118,7 @@
 		<!-- 
 			히든 필드에 게시글을 글번호를 설정합니다.
 		 -->
-		<input type="hidden" name="postNo" value="100">
+		<input type="hidden" name="postNo" value="${post.no }">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title">댓글 등록폼</h5>

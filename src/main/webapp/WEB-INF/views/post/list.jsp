@@ -57,7 +57,7 @@
 								</tr>
 							</c:when>
 							<c:otherwise>
-								<c:forEach var="post" items="${posts }">
+								<c:forEach var="post" items="${posts }"> <!-- 배열의 반복처리  -->
 									<tr>
 										<td>${post.no }</td>
 										<td><a href="read?postNo=${post.no }" class="text-decoration-none">${post.title }</a></td><!-- /없으니까 상대경로 -->
@@ -72,6 +72,26 @@
 				</tbody>
 			</table>
 			
+			<c:if test="${not empty posts }">
+            <nav aria-label="Page navigation example">
+               <ul class="pagination justify-content-center">
+                  <li class="page-item">
+                     <a class="page-link ${pagination.first ? 'disabled' : '' }" 
+                        href="list?page=${pagination.prevPage }">이전</a>
+                  </li>   
+                  <c:forEach var="num" begin="${pagination.beginPage }" end="${pagination.endPage }">
+                     <li class="page-item">
+                        <a class="page-link ${pagination.page eq num ? 'active' : '' }" href="list?page=${num }">${num }</a>
+                     </li>   
+                  </c:forEach>
+                  
+                  <li class="page-item">
+                     <a class="page-link ${pagination.last ? 'disabled' : '' }" 
+                        href="list?page=${pagination.nextPage }">다음</a>
+                  </li>   
+               </ul>
+            </nav>
+         </c:if>
 		</div>
 	</div>
 </div>
