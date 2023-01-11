@@ -2,6 +2,9 @@ package com.sample.dto;
 
 import java.util.Date;
 
+import org.apache.ibatis.type.Alias;
+
+@Alias("PostListDto")
 public class PostListDto {
 
 	private int no;

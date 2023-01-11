@@ -3,8 +3,11 @@ package com.sample.dto;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.ibatis.type.Alias;
+
 import com.sample.vo.UserRole;
 
+@Alias("UserDetailDto")
 public class UserDetailDto {
 
 	private String id;

@@ -2,24 +2,53 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sample.mapper.PostMapper">
 
-	<select id="getPosts" resultType="com.sample.dto.PostListDto">
+	<!-- 
+		int getTotalRows()
+	 -->
+	 <select id="getTotalRows" resultType="int">
+	 	select
+	 		count(*)
+	 	from
+	 		spring_posts
+	 	where
+	 		post_deleted = 'N'
+	 </select>
+	 
+	 <!-- 
+	 	List<PostListDto> getPosts(Map<String, Object> param)
+	  -->
+	<select id="getPosts" parameterType="map" resultType="PostListDto">
 		select
-			A.post_no as no,
-			A.post_title as title,
-			A.post_user_id as userId,
-			A.post_read_count as readCount,
-			A.post_comment_count as commentCount,
-			A.post_created_date as createdDate,
-			B.user_name as userName
-		from
-			spring_posts A, spring_users B
-		where
-			A.post_user_id = B.user_id
-			and A.post_deleted = 'N'
-		order by
-			A.post_no desc
+         post_no          as no,
+         post_title         as title,
+         post_user_id      as userId,
+         user_name         as userName,
+         post_read_count      as readCount,
+         post_comment_count   as commentCount,
+         post_created_date   as createdDate
+      from (
+         select
+            row_number() over (order by A.post_no desc) row_numbers,
+            A.post_no,
+            A.post_title,
+            A.post_user_id,
+            B.user_name,
+            A.post_read_count,
+            A.post_comment_count,
+            A.post_created_date
+         from
+            spring_posts A, spring_users B
+         where
+            A.post_deleted = 'N'
+            and A.post_user_id = B.user_id
+         )
+      where
+         row_numbers between #{begin} and #{end}
 	</select>
 	
+	<!-- 
+		void insertPost(Post post);
+	 -->
 	<insert id="insertPost" parameterType="Post">
 		insert into spring_posts
 			(post_no, post_title, post_user_id, post_content)
@@ -27,6 +56,9 @@
 			(spring_posts_seq.nextval, #{title}, #{userId}, #{content})
 	</insert>
 	
+	<!-- 
+		void updatePost(Post post)
+	 -->
 	<update id="updatePost" parameterType="Post">
 		update
 			spring_posts
@@ -36,8 +68,50 @@
 			post_deleted = #{deleted},
 			post_read_count = #{readCount},
 			post_comment_count = #{commentCount},
-			post_updated_date = #{updatedDate}
+			post_updated_date = sysdate
 		where
-			post_user_id = #{userId}
+			post_no = #{no}
 	</update>
+	
+	<!-- 
+		Post getPostByNo(int postNo) 이 경우에는 Param을 안씀 2개이상일 때 사용가능~
+	 -->
+	 <select id="getPostByNo" parameterType="int" resultType="Post">
+	 	select
+	 		post_no as no,
+	 		post_title as title,
+	 		post_user_id as userId,
+	 		post_content as content,
+	 		post_read_count as readCount,
+	 		post_comment_count as commentCount,
+	 		post_deleted as deleted,
+	 		post_updated_date as updatedDate,
+	 		post_created_date as createdDate
+	 	from
+	 		spring_posts
+	 	where
+	 		post_no = #{value}
+	 </select>
+	 
+	 <!-- 
+      PostDetailDto getPostDetailByNo(int postNo);
+      게시글 상세정보
+    -->
+   <select id="getPostDetailByNo" parameterType="int" resultType="PostDetailDto">
+      select 
+         A.post_no            as no,
+         A.post_title         as title,
+         A.post_user_id         as userId,
+         B.user_name            as userName,
+         A.post_read_count      as readCount,
+         A.post_comment_count   as commentCount,
+         A.post_content         as content,
+         A.post_created_date      as createdDate,
+         A.post_updated_date      as updatedDate
+      from
+         spring_posts A, spring_users B
+      where
+         A.post_user_id = B.user_id
+         and A.post_no = #{value}
+   </select>
 </mapper>
