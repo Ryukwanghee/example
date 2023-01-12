@@ -48,13 +48,24 @@
 	
 	<!-- 
 		void insertPost(Post post);
+		keyPropery의 no가 Post.java의 no임 , 조회된 값을 no에 담는다는 말
 	 -->
 	<insert id="insertPost" parameterType="Post">
-		insert into spring_posts
-			(post_no, post_title, post_user_id, post_content)
-		values
-			(spring_posts_seq.nextval, #{title}, #{userId}, #{content})
-	</insert>
+      <selectKey keyProperty="no" resultType="int" order="BEFORE">
+         select spring_posts_seq.nextval from dual
+      </selectKey>
+      insert into spring_posts
+      (post_no, post_title, post_user_id, post_content)
+      values
+      (#{no}, #{title}, #{userId}, #{content})
+   </insert>
+   
+   <insert id="insertAttachedFile" parameterType="AttachedFile">
+   		insert into spring_post_attached_files
+   		(post_no, file_name)
+   		values
+   		(#{postNo}, #{filename})
+   </insert>
 	
 	<!-- 
 		void updatePost(Post post)

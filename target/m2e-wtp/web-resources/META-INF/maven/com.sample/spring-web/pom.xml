@@ -148,6 +148,14 @@
 	         <version>2.3.3</version>
 	         <scope>provided</scope>
 	      </dependency>
+	      
+	      <!-- 파일 업로드를 지원하는 라이브러리 의존성 추가 -->
+	      <dependency>
+	          <groupId>commons-fileupload</groupId>
+	          <artifactId>commons-fileupload</artifactId>
+	            <version>1.4</version>
+	      </dependency>
+	      
 	</dependencies>
 
 	<build>

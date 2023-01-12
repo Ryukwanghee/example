@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sample.dto.PostCommentListDto;
 import com.sample.dto.PostDetailDto;
@@ -15,11 +16,13 @@ import com.sample.exception.ApplicationException;
 import com.sample.mapper.PostCommentMapper;
 import com.sample.mapper.PostMapper;
 import com.sample.utils.Pagination;
+import com.sample.vo.AttachedFile;
 import com.sample.vo.Comment;
 import com.sample.vo.Post;
 import com.sample.web.request.PostRegisterForm;
 
 @Service
+@Transactional	//트랜잭션은 오류 발생시 롤백, 아닐때는 커밋 논리적작업단위
 public class PostService {
 	
 	// PostService는 매퍼 2개 주입받는다.
@@ -32,11 +35,18 @@ public class PostService {
 	public void insertPost(String userId, PostRegisterForm form) {
 		Post post = new Post();
 		post.setUserId(userId);
-		// BeanUtils.copyProperties(form, post);
+		// BeanUtils.copyProperties(form, post);	form과 post의 같은 이름에 대한 값을 form->post로 복사해줌
 		post.setTitle(form.getTitle());
 		post.setContent(form.getContent());
 		
 		postMapper.insertPost(post);
+		
+		AttachedFile attachedFile = new AttachedFile();
+		attachedFile.setPostNo(post.getNo());	//post.xml에 selectKey를 이용해서 사용했다. 부모테이블에서 자식테이블 자식테이블 자식테이블 이런식으로 생성되고 저장될 때 no를 더 편리하게 사용할 수 있다.
+		attachedFile.setFilename(form.getFilename());
+		
+		postMapper.insertAttachedFile(attachedFile);
+		
 	}
 	
 	// 게시글의 조회수를 증가시키는 서비스

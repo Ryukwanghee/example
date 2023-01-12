@@ -27,5 +27,21 @@
 	
 	<mybatis-spring:scan base-package="com.sample.mapper"/> <!-- mapper안에 패키지 스캔해서 전부 스프링의 빈으로 등록 -->
 	
+	<!-- 
+      @Transactional을 이용하는 선언적 트랜잭션 처리
+         - 트랜잭션매니저를 스프링컨테이너의 빈으로 등록한다.
+            <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+               <property name="dataSource" ref="dataSource" />
+            </bean>   
+         - @Transactional 어노테이션을 활성화시킨다.
+            <tx:annotation-driven transaction-manager="transactionManager"/>
+            * <tx:annotation-driver /> 태그는 
+               @Transactional 어노테이션을 감지하고, 
+               해당 어노테이션이 사용된 클래스나 메소드가 실행될 때 자동으로 트랜잭션매니저를 실행시키는 객체를 스프링컨테이너의 빈으로 등록시킨다.
+    -->
+   <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+      <property name="dataSource" ref="dataSource" />
+   </bean>   
+   <tx:annotation-driven transaction-manager="transactionManager"/>
 	
 </beans>

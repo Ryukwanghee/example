@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sample.dto.UserDetailDto;
 import com.sample.exception.ApplicationException;
@@ -15,6 +16,7 @@ import com.sample.vo.UserRole;
 import com.sample.web.request.UserRegisterForm;
 
 @Service // 서비스에서 컨트롤러로 의존성 주입(UserService -> HomeController)
+@Transactional
 public class UserService {
 	
 	

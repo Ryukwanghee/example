@@ -1,14 +1,19 @@
 package com.sample.web.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sample.dto.PostDetailDto;
 import com.sample.service.PostService;
@@ -19,6 +24,8 @@ import com.sample.web.request.PostRegisterForm;
 @Controller
 @RequestMapping("/post")
 public class PostController {
+	
+	private final String directory = "c:/files";
 	
 	@Autowired
 	private PostService postService; // 컨트롤러는 서비스가 필요
@@ -44,7 +51,18 @@ public class PostController {
 	}
 	
 	@PostMapping("/insert")
-	public String insertPost(@LoginUser LoginUserInfo loginUserInfo, PostRegisterForm form) { //입력요소를 전달받을 클래스 만들어줌. PostRegisterForm
+	public String insertPost(@LoginUser LoginUserInfo loginUserInfo, PostRegisterForm form) throws IOException{ //입력요소를 전달받을 클래스 만들어줌. PostRegisterForm
+		// 첨부파일 업로드 처리 (PostRegisterForm에 들어가 있으므로)
+		MultipartFile upfile = form.getUpfile();
+		if (!upfile.isEmpty()) {
+			// 첨부파일이름을 조회하고, PostRegisterForm객체에 대입한다.
+			String filename = upfile.getOriginalFilename(); // 반드시 이 이름으로 써줘야함. 자바에서 제공되는 것
+			form.setFilename(filename);	//파일이름을 form에 담아둠 service에 주려고 form에 담는것
+			
+			// 첨부파일을 지정된 디렉토리에 저장한다. upfile과 중복되는 부분을 오른쪽 file에 복사한다.
+			FileCopyUtils.copy(upfile.getInputStream(), new FileOutputStream(new File(directory, filename)));
+		}
+		
 		// controller-> service->mapper	->service -> controller
 		postService.insertPost(loginUserInfo.getId(), form);
 		
