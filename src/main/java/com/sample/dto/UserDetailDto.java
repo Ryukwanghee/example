@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sample.vo.UserRole;
 
 @Alias("UserDetailDto")
@@ -14,6 +15,7 @@ public class UserDetailDto {
 	private String name;
 	private String email;
 	private String tel;
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createdDate;
 	private List<UserRole> userRoles;
 	

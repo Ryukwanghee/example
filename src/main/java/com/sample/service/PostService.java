@@ -19,6 +19,7 @@ import com.sample.utils.Pagination;
 import com.sample.vo.AttachedFile;
 import com.sample.vo.Comment;
 import com.sample.vo.Post;
+import com.sample.vo.Tag;
 import com.sample.web.request.PostRegisterForm;
 
 @Service
@@ -32,8 +33,10 @@ public class PostService {
 	@Autowired
 	private PostMapper postMapper; // 서비스는 매퍼가 필요
 	
+	// 게시글 등록서비스
 	public void insertPost(String userId, PostRegisterForm form) {
-		Post post = new Post();
+		// SPRING_POSTS 테이블에 게시글 정보 저장
+		Post post = new Post();	// 게시글 등록
 		post.setUserId(userId);
 		// BeanUtils.copyProperties(form, post);	form과 post의 같은 이름에 대한 값을 form->post로 복사해줌
 		post.setTitle(form.getTitle());
@@ -41,12 +44,23 @@ public class PostService {
 		
 		postMapper.insertPost(post);
 		
+		// SPRING_POST_ATTACHED_FILES 테이블에 게시글 첨부파일 정보 저장
+		if (form.getFilename() != null) {	// 파일이름으로 파일있는지 확인, 있으면 파일등록
 		AttachedFile attachedFile = new AttachedFile();
 		attachedFile.setPostNo(post.getNo());	//post.xml에 selectKey를 이용해서 사용했다. 부모테이블에서 자식테이블 자식테이블 자식테이블 이런식으로 생성되고 저장될 때 no를 더 편리하게 사용할 수 있다.
 		attachedFile.setFilename(form.getFilename());
 		
 		postMapper.insertAttachedFile(attachedFile);
 		
+		}
+		// SPRING_POST_TAGS 테이블에 게시글 태그정보 저장
+		if (form.getTags() != null) {
+			List<String> tags = form.getTags();
+			for (String tagContent : tags) {
+				Tag tag = new Tag(post.getNo(), tagContent);	// 셀렉트 키에서 no가 전달
+				postMapper.insertTag(tag);
+			}
+		}
 	}
 	
 	// 게시글의 조회수를 증가시키는 서비스
@@ -65,13 +79,23 @@ public class PostService {
 	
 	// 게시글상세정보(게시글 정보와 댓글목록 정보)를 제공하는 서비스
 	public PostDetailDto getPostDetail(int postNo) {
-		PostDetailDto postDetaildto = postMapper.getPostDetailByNo(postNo);	//게시글 상세정보 조회
+		//게시글 상세정보 조회
+		PostDetailDto postDetaildto = postMapper.getPostDetailByNo(postNo);	
 		if (postDetaildto == null) {
 			throw new ApplicationException("["+postNo+"] 번 게시글이 존재하지 않습니다.");
 		}
 		
+		// 댓글정보조회
 		List<PostCommentListDto> postCommentListDtos = postCommentMapper.getPostCommentsByPostNo(postNo); //게시글 댓글 조회
 		postDetaildto.setComments(postCommentListDtos);
+		
+		// 첨부파일 정보 조회
+		List<AttachedFile> attachedFiles = postMapper.getAttachedFilesByPostNo(postNo);
+		postDetaildto.setAttachedFiles(attachedFiles);
+		
+		// 태그 정보 조회
+		List<Tag> tags = postMapper.getTagsByPostNo(postNo);
+		postDetaildto.setTags(tags);
 		
 		return postDetaildto;
 	}

@@ -58,6 +58,36 @@
 						<td>${post.commentCount }</td>
 					</tr>
 					<tr>
+						<th>첨부파일</th>
+						<td colspan="3">
+							<c:choose>
+								<c:when test="${empty post.attachedFiles }">
+									 등록된 첨부파일이 없습니다.
+								</c:when>
+								<c:otherwise> <!-- list니까 반복처리 -->
+									<c:forEach var="file" items="${post.attachedFiles }">
+										<a href="download?filename=${file.filename }" class="btn btn-outline-dark btn-sm">${file.filename } <i class="bi bi-download ms-2"></i></a>
+									</c:forEach>
+								</c:otherwise>
+							</c:choose>
+						</td>
+					</tr>
+					<tr>
+						<th>태그</th>
+						<td colspan="3">
+							<c:choose>
+								<c:when test="${empty post.tags }">
+									 등록된 태그가 없습니다.
+								</c:when>
+								<c:otherwise> <!-- list니까 반복처리 -->
+									<c:forEach var="tag" items="${post.tags }">
+										<span class="badge text-bg-secondary">#${tag.content } </span>
+									</c:forEach>
+								</c:otherwise>
+							</c:choose>
+						</td>
+					</tr>
+					<tr>
 						<th>내용</th>
 						<td colspan="3">${post.content }</td>
 					</tr>
