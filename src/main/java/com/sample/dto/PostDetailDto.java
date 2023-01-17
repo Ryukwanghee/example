@@ -14,6 +14,7 @@ public class PostDetailDto {	//출력화면 표현하는 DTO 정의하고 DTO에
 	//게시글정보
 	private String title;
 	private int no;
+	private String deleted;
 	private String userId;
 	private String userName;
 	private int readCount;
@@ -99,6 +100,12 @@ public class PostDetailDto {	//출력화면 표현하는 DTO 정의하고 DTO에
 	}
 	public void setTags(List<Tag> tags) {
 		this.tags = tags;
+	}
+	public String getDeleted() {
+		return deleted;
+	}
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
 	}
 	
 	

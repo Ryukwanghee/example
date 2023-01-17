@@ -23,17 +23,17 @@
 			<p>제목과 내용을 입력하세요</p>
 			<form class="border bg-light p-3" method="post" action="modify">
 				<!-- 히든필드에 게시글 번호를 설정한다. -->
-				<input type="hidden" name="postNo" value="100" />
+				<input type="hidden" name="no" value="${modifyPost.no }" /> <!-- modify-form에 no가 name=no이름과 같게 -->
 				<div class="mb-2">
 					<label class="form-label">제목</label>
-					<input type="text" class="form-control" name="title" value="연습"/>
+					<input type="text" class="form-control" name="title" value="${modifyPost.title }"/>
 				</div>
 				<div class="mb-2">
 					<label class="form-label">내용</label>
-					<textarea rows="4" class="form-control" name="content">내용입니다.</textarea>
+					<textarea rows="4" class="form-control" name="content">${modifyPost.content }</textarea>
 				</div>
 				<div class="text-end">
-					<a href="detail?postNo=100" class="btn btn-secondary btn-sm">취소</a>
+					<a href="detail?postNo=${modifyPost.no} }" class="btn btn-secondary btn-sm">취소</a>
 					<button type="submit" class="btn btn-primary btn-sm">수정</button>
 				</div>
 			</form>

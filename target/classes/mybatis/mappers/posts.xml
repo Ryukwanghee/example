@@ -156,6 +156,7 @@
          A.post_title         as title,
          A.post_user_id         as userId,
          B.user_name            as userName,
+         A.post_deleted			as deleted,
          A.post_read_count      as readCount,
          A.post_comment_count   as commentCount,
          A.post_content         as content,

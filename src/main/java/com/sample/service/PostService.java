@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import com.sample.vo.AttachedFile;
 import com.sample.vo.Comment;
 import com.sample.vo.Post;
 import com.sample.vo.Tag;
+import com.sample.web.request.PostModifyForm;
 import com.sample.web.request.PostRegisterForm;
 
 @Service
@@ -137,5 +139,12 @@ public class PostService {
 		post.setCommentCount(post.getCommentCount() + 1);
 		postMapper.updatePost(post);
 		
+	}
+
+	public void updatePost(PostModifyForm postModifyForm) {
+		Post post = new Post();
+		BeanUtils.copyProperties(postModifyForm, post);
+		
+		postMapper.updatePost(post);
 	}
 }
