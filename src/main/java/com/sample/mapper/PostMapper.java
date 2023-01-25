@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.sample.dto.PostDetailDto;
 import com.sample.dto.PostListDto;
+import com.sample.vo.AttachedFile;
 import com.sample.vo.Post;
+import com.sample.vo.Tag;
 
 
 @Mapper
@@ -22,4 +24,10 @@ public interface PostMapper {
 	List<PostListDto> getPosts(Map<String, Object> param);
 	
 	PostDetailDto getPostDetailByNo(int postNo);
+	
+	void insertAttachedFile(AttachedFile attachedFile);
+	void insertTag(Tag tag);
+	
+	List<AttachedFile> getAttachedFilesByPostNo(int postNo);
+	List<Tag> getTagsByPostNo(int postNo);
 }

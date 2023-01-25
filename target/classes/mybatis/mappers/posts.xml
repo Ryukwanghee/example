@@ -48,13 +48,39 @@
 	
 	<!-- 
 		void insertPost(Post post);
+		keyPropery의 no가 Post.java의 no임 , 조회된 값을 no에 담는다는 말
 	 -->
 	<insert id="insertPost" parameterType="Post">
-		insert into spring_posts
-			(post_no, post_title, post_user_id, post_content)
-		values
-			(spring_posts_seq.nextval, #{title}, #{userId}, #{content})
-	</insert>
+      <selectKey keyProperty="no" resultType="int" order="BEFORE">
+         select spring_posts_seq.nextval from dual
+      </selectKey>
+      insert into spring_posts
+      (post_no, post_title, post_user_id, post_content)
+      values
+      (#{no}, #{title}, #{userId}, #{content})
+   </insert>
+   
+   <!-- 
+   	void insertAttachedFile(AttachedFile attachedFile);
+    -->
+   <insert id="insertAttachedFile" parameterType="AttachedFile">
+   		insert into spring_post_attached_files
+   		(post_no, file_name)
+   		values
+   		(#{postNo}, #{filename})
+   </insert>
+	
+	<!-- 
+		void insertTag(Tag tag);
+	 -->
+	 <insert id="insertTag" parameterType="tag">
+	 	insert into spring_post_tags
+	 	(post_no, tag_content)
+	 	values
+	 	(#{postNo}, #{content})
+	 </insert>
+	 
+	 
 	
 	<!-- 
 		void updatePost(Post post)
@@ -94,6 +120,33 @@
 	 </select>
 	 
 	 <!-- 
+	 	List<AttachedFile> getAttachedFilesByPostNo(int postNo);
+	  -->
+	 <select id="getAttachedFilesByPostNo" parameterType="int" resultType="AttachedFile">
+	 	select
+	 		post_no as postNo,
+	 		file_name as filename
+	 	from
+	 		spring_post_attached_files
+	 	where
+	 		post_no = #{value}
+	 </select>
+	 
+	 
+	 <!-- 
+	 	List<Tag> getTagsByPostNo(int postNo)
+	  -->
+	 <select id="getTagsByPostNo" parameterType="int" resultType="Tag">
+	 	select
+	 		post_no as postNo,
+	 		tag_content as content
+	 	from
+	 		spring_post_tags
+	 	where
+	 		post_no = #{value}
+	 </select>
+	 
+	 <!-- 
       PostDetailDto getPostDetailByNo(int postNo);
       게시글 상세정보
     -->
@@ -103,6 +156,7 @@
          A.post_title         as title,
          A.post_user_id         as userId,
          B.user_name            as userName,
+         A.post_deleted			as deleted,
          A.post_read_count      as readCount,
          A.post_comment_count   as commentCount,
          A.post_content         as content,

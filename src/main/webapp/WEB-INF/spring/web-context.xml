@@ -60,4 +60,14 @@
 			com.sample.web에 있는거 싹다 스캔해라
 	 -->
 	<context:component-scan base-package="com.sample.web" />
+	
+	<!-- 
+		multipart 요청(첨부파일 업로드 요청)을 지원하는 MultipartResolver 객체를 스프링 컨테이너의 빈으로 등록시킨다.
+	 	반드시, id가 "multipartResolver"
+	 -->
+	 <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	 	<property name="defaultEncoding" value="UTF-8" />
+	 	<property name="maxUploadSize" value="10485760" /> <!--총 합쳐서 업로드 가능한 사이즈 -->
+	 	<property name="maxUploadSizePerFile" value="10485760" /> <!-- 한 파일당 사이즈  -->
+	 </bean>
 </beans>

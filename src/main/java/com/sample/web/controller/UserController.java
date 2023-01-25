@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sample.dto.UserDetailDto;
 import com.sample.service.UserService;
@@ -74,5 +75,13 @@ public class UserController {
 	@GetMapping("/password-success")
 	public String passwordChangeSuccess() {
 		return "user/password-success";
+	}
+	
+	@GetMapping("/detail.json")
+	@ResponseBody	// JSON . userDetailDto객체를 Json과 같은 여러 형태로 전달 , <요청핸들러메소드가 반환하는게 응답메시지의 바디에 담겨서 내려간다(객체를 반환) 원래는 HTML이 담겨서 내려가는데>
+	public UserDetailDto userDetail(@RequestParam("userId") String userId) {	//반환값이 객체가 되도록 만드는 것 Json
+		UserDetailDto dto = userService.getUserDetail(userId);
+		
+		return dto;
 	}
 }

@@ -1,24 +1,43 @@
 package com.sample.web.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.sample.dto.PostDetailDto;
+import com.sample.exception.ApplicationException;
 import com.sample.service.PostService;
 import com.sample.web.login.LoginUser;
 import com.sample.web.login.LoginUserInfo;
+import com.sample.web.request.PostModifyForm;
 import com.sample.web.request.PostRegisterForm;
+import com.sample.web.view.FileDownloadView;
 
 @Controller
 @RequestMapping("/post")
+@SessionAttributes({"modifyPost"})
 public class PostController {
+	
+	private final String directory = "c:/files";
+	
+	// 스프링의 빈으로 등록되어있으니까 주입받을 수 있는 것
+	@Autowired
+	private FileDownloadView fileDownloadView;
 	
 	@Autowired
 	private PostService postService; // 컨트롤러는 서비스가 필요
@@ -44,7 +63,18 @@ public class PostController {
 	}
 	
 	@PostMapping("/insert")
-	public String insertPost(@LoginUser LoginUserInfo loginUserInfo, PostRegisterForm form) { //입력요소를 전달받을 클래스 만들어줌. PostRegisterForm
+	public String insertPost(@LoginUser LoginUserInfo loginUserInfo, PostRegisterForm form) throws IOException{ //입력요소를 전달받을 클래스 만들어줌. PostRegisterForm
+		// 첨부파일 업로드 처리 (PostRegisterForm에 들어가 있으므로)
+		MultipartFile upfile = form.getUpfile();
+		if (!upfile.isEmpty()) {
+			// 첨부파일이름을 조회하고, PostRegisterForm객체에 대입한다.
+			String filename = upfile.getOriginalFilename(); // 반드시 이 이름으로 써줘야함. 자바에서 제공되는 것
+			form.setFilename(filename);	//파일이름을 form에 담아둠 service에 주려고 form에 담는것
+			
+			// 첨부파일을 지정된 디렉토리에 저장한다. upfile과 중복되는 부분을 오른쪽 file에 복사한다.
+			FileCopyUtils.copy(upfile.getInputStream(), new FileOutputStream(new File(directory, filename)));
+		}
+		
 		// controller-> service->mapper	->service -> controller
 		postService.insertPost(loginUserInfo.getId(), form);
 		
@@ -70,6 +100,26 @@ public class PostController {
 		return "post/detail";
 	}
 	
+	@GetMapping("/download")
+	public ModelAndView fileDownload(@RequestParam("filename") String filename) {
+		// 지정된 파일정보를 표현하는 File객체 생성
+		File file = new File(directory, filename);
+		// 파일이 존재하지 않으면 예외를 던진다. 파일이 존재하지 않더라도 File객체는 생성할 수 있다. 파일이 존재하지 않는다해도 null은 아님 그래서 객체를 생성할 수 있는것.
+		if (!file.exists()) {
+			throw new ApplicationException("["+filename+"] 파일이 존재하지 않습니다.");
+		}
+		
+		ModelAndView mav = new ModelAndView();
+		
+		// ModelAndView의 Model에 값 저장 뷰의모델
+		mav.addObject("file", file); //파일 자체를 전해줌
+		
+		// ModelAndView의 View에 DownloadView 객체 저장
+		mav.setView(fileDownloadView);
+		
+		return mav;
+	}
+	
 	@PostMapping("/insert-comment")
 	public String insertComment(@LoginUser LoginUserInfo loginUserInfo,
 			@RequestParam("postNo") int postNo,
@@ -85,4 +135,24 @@ public class PostController {
 		
 		return "redirect:detail?postNo=" + postNo;
 	}
+	
+	@GetMapping("/modify")
+	public String modifyform(@RequestParam("postNo") int postNo, Model model) {
+		PostDetailDto dto = postService.getPostDetail(postNo); // postNo를 받아와서 상세정보 조회
+		
+		PostModifyForm form = new PostModifyForm();
+		BeanUtils.copyProperties(dto, form); // dto를 form에 복사
+		
+		model.addAttribute("modifyPost", form);	// 이 모델에 담긴 것을 세션에 담기게 하려면 @SessionAttributes({"modifyPost"}) 사용
+		return "post/modify-form";
+	}
+	
+	@PostMapping("/modify")
+	public String modify(@ModelAttribute("modifyPost") PostModifyForm postModifyForm) {  //@ModelAttribute("modifyPost") modifyPost를 찾는 것
+		postService.updatePost(postModifyForm);
+		
+		return "redirect:detail?postNo=" + postModifyForm.getNo();
+	}
+	
+	
 }

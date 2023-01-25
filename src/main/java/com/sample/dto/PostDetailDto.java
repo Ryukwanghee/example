@@ -5,19 +5,29 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
-@Alias("PostDetailDto")
-public class PostDetailDto {
+import com.sample.vo.AttachedFile;
+import com.sample.vo.Tag;
 
+@Alias("PostDetailDto")
+public class PostDetailDto {	//출력화면 표현하는 DTO 정의하고 DTO에 필요한 정보 전부 조회해서 저장
+
+	//게시글정보
 	private String title;
 	private int no;
+	private String deleted;
 	private String userId;
 	private String userName;
 	private int readCount;
 	private int commentCount;
 	private String content;
 	private Date createdDate;
-	private Date updatedDate;
-	private List<PostCommentListDto> comments;
+	private Date updatedDate;			// title부터 여기까지는 spring_users, spring_posts -> PostDetailDto postmapper.getPostDetail(postNo)
+	//댓글정보
+	private List<PostCommentListDto> comments;	//spring_users와 spring_post_comments -> List<PostCommentListDto> getPostCommentsByPostNo(postNo)
+	// 첨부파일정보
+	private List<AttachedFile> attachedFiles;	//spring_post_attached_files -> List<AttachedFile> getAttachedFileByPostNo(postNo)
+	// 태그정보
+	private List<Tag> tags;	// spring_post_tags 테이블 -> List<Tag> getTagsByPostNo(postNo)
 	
 	public String getTitle() {
 		return title;
@@ -78,6 +88,24 @@ public class PostDetailDto {
 	}
 	public void setComments(List<PostCommentListDto> comments) {
 		this.comments = comments;
+	}
+	public List<AttachedFile> getAttachedFiles() {
+		return attachedFiles;
+	}
+	public void setAttachedFiles(List<AttachedFile> attachedFiles) {
+		this.attachedFiles = attachedFiles;
+	}
+	public List<Tag> getTags() {
+		return tags;
+	}
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+	public String getDeleted() {
+		return deleted;
+	}
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
 	}
 	
 	
